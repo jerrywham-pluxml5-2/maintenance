@@ -3,8 +3,8 @@
  * Plugin Maintenance
  *
  * @package	PLX
- * @version	1.0
- * @date	06/10/2013
+ * @version	1.1
+ * @date	07/10/2013
  * @author	Cyril MAGUIRE
  **/
 class maintenance extends plxPlugin {
@@ -28,6 +28,25 @@ class maintenance extends plxPlugin {
 	}
 
 	/**
+	 * Méthode qui préconfigure le plugin
+	 *
+	 * @return	stdio
+	 * @author	Cyril MAGUIRE
+	 **/
+	public function onActivate() {
+		$plxAdmin = plxAdmin::getInstance();
+		#Paramètres par défaut
+		if(!is_file($this->plug['parameters.xml'])) {
+			$this->setParam('title', plxUtils::strCheck($plxAdmin->aConf['title']).' | Maintenance', 'cdata');
+			$this->setParam('favicon', '', 'cdata');
+			$this->setParam('css', '', 'cdata');
+			$this->setParam('html', '<h1>Site en maintenance</h1><p>Nous sommes dans le cambouis ! Revenez plus tard ! ^_^</p><p>	Merci de votre visite</p>', 'cdata');
+			$this->saveParams();
+		}
+	}
+
+
+	/**
 	 * Méthode qui affiche un message s'il y a un message à afficher
 	 *
 	 * @return	stdio
@@ -41,7 +60,7 @@ class maintenance extends plxPlugin {
 			} else {
 				$maintenance = $plxAdmin->plxPlugins->aPlugins["maintenance"];
 			}
-			if($maintenance->getParam("maintenance")==1) {
+			if($maintenance->getParam("maintenance")==1 && $maintenance->getParam("ip")!="") {
 				echo "<p class=\"notice\">".$maintenance->getLang("L_MAINTENANCE_ACTIVATED")."</p>";
 				plxMsg::Display();
 			}';
@@ -78,19 +97,28 @@ class maintenance extends plxPlugin {
 		$ht .= 'RewriteCond %{REMOTE_ADDR} !'.$this->getParam('ip')."\n";
 		$ht .= 'RewriteRule ^(.*)$ '.$plxMotor->racine.'plugins/maintenance/workinprogress.php [L]'."\n";
 		$ht .= '</IfModule>';
-		if (is_file(PLX_ROOT.'.htaccess')) {
-			rename(PLX_ROOT.'.htaccess', PLX_ROOT.'htaccess.txt');
-		}
-		plxUtils::write($ht, PLX_ROOT.'.htaccess');
+		$content = '';
+		if(is_file(PLX_ROOT.'.htaccess'))
+			$content = implode('', file(PLX_ROOT.'.htaccess'));
+
+        if(preg_match("/^(.*)# BEGIN -- Pluxml.*# END -- Pluxml(.*)$/ms", $content, $capture) !== false) {
+            rename(PLX_ROOT.'.htaccess', PLX_ROOT.'htaccess.txt');
+            plxUtils::write($ht, PLX_ROOT.'.htaccess');
+        }
+		
 	}
 	public function delhtaccess() {
 		if (is_file(PLX_ROOT.'.htaccess')) {
-			unlink(PLX_ROOT.'.htaccess');
-		}
-		if (is_file(PLX_ROOT.'htaccess.txt')) {
-			$ht = file_get_contents(PLX_ROOT.'htaccess.txt');
-			plxUtils::write($ht, PLX_ROOT.'.htaccess');
-			unlink(PLX_ROOT.'htaccess.txt');
+			$content = '';
+			if (is_file(PLX_ROOT.'htaccess.txt')) {
+				$content = implode('', file(PLX_ROOT.'.htaccess'));
+			}
+
+	        if(preg_match("/^(.*)# BEGIN -- Pluxml.*# END -- Pluxml(.*)$/ms", $content, $capture) !== false) {
+					$ht = file_get_contents(PLX_ROOT.'htaccess.txt');
+					plxUtils::write($ht, PLX_ROOT.'.htaccess');
+					unlink(PLX_ROOT.'htaccess.txt');
+	        }
 		}
 	}
 
