@@ -11,7 +11,7 @@ header('X-Powered-By:');
 <meta http-equiv="content-language" content="fr" /><meta property="og:language" content="fr" />
 <title>Mon site en dérangement</title>
 <link rel="icon" type="image/x-icon" href="/plugins/favicon/img/favicon.ico" />
-<link href="/plugins/maintenance/style.css" rel="stylesheet" type="text/css">
+<link href="http://localhost:8888/PROJETS/AARCH/plugins/maintenance/style.css" rel="stylesheet" type="text/css">
 </head><body><h1>
 	Site en maintenance</h1>
 <p>

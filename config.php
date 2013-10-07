@@ -13,9 +13,10 @@
 	plxToken::validateFormToken($_POST);
 	
 	if(!empty($_POST)) {
+		$css = trim(str_replace(array(' ',"\n","\r","\t"),' ',(strip_tags($_POST['css']))));
 		$plxPlugin->setParam('title', $_POST['title'], 'cdata');
 		$plxPlugin->setParam('favicon', $_POST['favicon'], 'cdata');
-		$plxPlugin->setParam('css', strip_tags($_POST['css']), 'cdata');
+		$plxPlugin->setParam('css', $css, 'cdata');
 		$plxPlugin->setParam('html', $_POST['html'], 'cdata');
 		$plxPlugin->saveParams();
 		$plxPlugin->mkcss();
