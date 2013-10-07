@@ -12,12 +12,13 @@ plxToken::validateFormToken($_POST);
 
 if(!empty($_POST)) {
 	$old = $plxPlugin->getParam('maintenance');
-	if ($_POST['maintenance']==1 && ($old == 0 || $old == '' || $old == null)) {	
+	$oldIp = $plxPlugin->getParam('ip');
+	if ($_POST['maintenance'] && !$old && !empty($_POST['ip'])) {	
 		$plxPlugin->setParam('ip', $_POST['ip'], 'cdata');
 		$plxPlugin->setParam('maintenance', $_POST['maintenance'], 'numeric');
 		$plxPlugin->saveParams();
 		$plxPlugin->mkhtaccess();
-	}elseif($_POST['maintenance']==0 && $old == 1) {
+	}elseif(!$_POST['maintenance'] && $old) {
 		$plxPlugin->setParam('ip', '', 'cdata');
 		$plxPlugin->setParam('maintenance', $_POST['maintenance'], 'numeric');
 		$plxPlugin->saveParams();
