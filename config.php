@@ -2,8 +2,8 @@
 /**
  * Classe maintenance
  *
- * @version 1.0
- * @date	06/10/2013
+ * @version 1.1
+ * @date	07/10/2013
  * @author	Cyril MAGUIRE
  **/
  
